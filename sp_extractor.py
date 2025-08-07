@@ -1,13 +1,9 @@
 # Import relevant packages
-import matplotlib.pyplot as plt
 import os
 import bz2
 import tarfile
 import json
-from datetime import datetime
 import pandas as pd
-import numpy as np
-import re
 
 # Step 1: Read and slightly alter dataframe including each PL match
 results_df = pd.read_excel("../../../Darts SR/results.xlsx", index_col=False)
