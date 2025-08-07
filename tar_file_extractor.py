@@ -1,3 +1,5 @@
+# File is used to extract .tar files to .JSON
+
 # Import relevant packages
 import os
 import bz2
