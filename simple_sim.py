@@ -107,4 +107,36 @@ def throw(score, inhand, player):
             
     return(score, inhand, checkout)
 
+# Function that simulates a leg between two players
+
+def leg(start_throw, home_player, away_player):
+    turn = start_throw
+    home_score = 501
+    away_score = 501
+    home_totals = [home_score]
+    away_totals = [away_score]
+    checkout = 0
+    winner = None
+    home_darts = 0
+    home_t_score = 0
+    away_darts = 0
+    away_t_score = 0
+    while checkout == 0:
+        if turn == 0:
+            home_score, inhand, checkout = throw(home_score, 3, home_player)
+            home_totals.append(home_score)
+            home_darts += 3-inhand
+            home_t_score += home_totals[-2] - home_totals[-1]            
+            turn = 1
+            if checkout == 1:
+                winner = 0
+        elif turn == 1:
+            away_score, inhand, checkout = throw(away_score, 3, away_player)
+            away_totals.append(away_score)
+            away_darts += 3-inhand
+            away_t_score += away_totals[-2] - away_totals[-1]            
+            turn = 0
+            if checkout == 1:
+                winner = 1
+    return(home_totals, away_totals, winner, home_darts, home_t_score, away_darts, away_t_score)
 
