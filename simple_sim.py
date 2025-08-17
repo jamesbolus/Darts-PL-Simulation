@@ -140,3 +140,69 @@ def leg(start_throw, home_player, away_player):
                 winner = 1
     return(home_totals, away_totals, winner, home_darts, home_t_score, away_darts, away_t_score)
 
+# Function that simulates a full match of a set number of legs
+
+def match(best_of, home_player, away_player, start_throw):
+    next_throw = start_throw
+    win_score = round(best_of/2)
+    legs_played = 0
+    home_legs = 0
+    away_legs = 0
+    match_winner = None
+    home_total_darts = 0
+    home_total_score = 0
+    away_total_darts = 0
+    away_total_score = 0
+    while max(home_legs, away_legs) < win_score:
+        home_leg, away_leg, winner, home_darts, home_t_score, away_darts, away_t_score = leg(next_throw, home_player, away_player)
+        home_total_darts += home_darts
+        home_total_score += home_t_score
+        away_total_darts += away_darts
+        away_total_score += away_t_score
+        next_throw = 1 if next_throw == 0 else 0
+        legs_played += 1
+        if winner == 0:
+            home_legs += 1
+        elif winner == 1:
+            away_legs += 1
+    score = [home_legs, away_legs]
+    if score[0] > score[1]:
+        match_winner = 0
+    elif score[1] > score[0]:
+        match_winner = 1
+
+    home_match_avg = 3*home_total_score/home_total_darts
+    away_match_avg = 3*away_total_score/away_total_darts
+    return(score, match_winner, home_match_avg, away_match_avg)
+
+# Function for monte carlo simulation of a PL game length
+
+def pl_monte_carlo(home_player, away_player, original_throw, n):
+    best_of = 11
+    win_score = round(best_of/2)
+    score_frequency = {}
+    original_throw = 0
+    for i in range(win_score):
+        score_frequency[f"{win_score}-{i}"] = 0
+    for i in range(win_score-1, -1, -1):
+        score_frequency[f"{i}-{win_score}"] = 0
+    
+    n_original = n
+    home_wins = 0
+    away_wins = 0
+    home_t_avg = []
+    away_t_avg = []
+    while n > 0:
+        score, match_winner, home_avg, away_avg = match(best_of, home_player, away_player, original_throw)
+        home_t_avg.append(home_avg)
+        away_t_avg.append(away_avg)
+        if match_winner == 0:
+            home_wins += 1
+        elif match_winner == 1:
+            away_wins += 1
+        h_legs = score[0]
+        a_legs = score[1]
+        score_frequency[f"{h_legs}-{a_legs}"] += 1
+        n -= 1
+    
+    return(score_frequency, home_wins, away_wins, home_t_avg, away_t_avg)
